@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "家和养生",
+    "slug": "jiahe-yangsheng",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "platforms": ["android"],
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.jiahe.yangsheng",
+      "versionCode": 1
+    }
+  }
+}
