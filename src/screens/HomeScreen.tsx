@@ -38,6 +38,14 @@ export function HomeScreen({ state }: { state: AppState }) {
     </View>
 
     <View style={styles.card}>
+      <Text style={styles.h2}>🧘 身心关怀</Text>
+      <Text style={styles.text}>{rec.term.mindAdvice || '宜静心养性，保持情绪平稳。'}</Text>
+      <View style={{ marginTop: 10, backgroundColor: '#f0f7f4', padding: 10, borderRadius: 8 }}>
+        <Text style={[styles.sub, { color: colors.greenDark }]}>💡 建议：{member.constitutions.includes('气郁质') ? '多散步沟通，舒缓肝气。' : '早睡早起，适度运动。'}</Text>
+      </View>
+    </View>
+
+    <View style={styles.card}>
       <Text style={styles.h2}>⚠️ 天气与健康提醒</Text>
       <Text style={styles.text}>{rec.weather.tip}</Text>
       <Text style={[styles.sub, { color: colors.danger, marginTop: 8 }]}>{safetyNote(member)}</Text>

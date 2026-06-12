@@ -1,39 +1,75 @@
-import React from 'react';
-import { ScrollView, View, Text, TextInput, Pressable } from 'react-native';
-import type { AppState } from '../lib/storage';
+import React, { useState } from 'react';
+import { ScrollView, View, Text, TextInput, Pressable, Alert } from 'react-native';
+import type { AppState, Member } from '../lib/storage';
 import { styles, colors } from '../components/styles';
+import { constitutions } from '../data/constitutions';
+
+const ALL_HEALTH_TAGS = ['孕期', '糖尿病', '高血压', '痛风', '久坐', '熬夜', '压力大', '花粉过敏'];
 
 export function SettingsScreen({ state, onChange }: { state: AppState; onChange: (s: AppState) => void }) {
   const model = state.model;
   const updateModel = (patch: Partial<typeof model>) => onChange({ ...state, model: { ...model, ...patch } });
+
+  const toggleMemberField = (memberId: string, field: 'constitutions' | 'healthTags', value: string) => {
+    const nextMembers = state.members.map(m => {
+      if (m.id !== memberId) return m;
+      const list = (m[field] as string[]).includes(value)
+        ? (m[field] as string[]).filter(v => v !== value)
+        : [...(m[field] as string[]), value];
+      return { ...m, [field]: list };
+    });
+    onChange({ ...state, members: nextMembers });
+  };
+
+  const deleteMember = (id: string) => {
+    if (state.members.length <= 1) return Alert.alert('提示', '请至少保留一个成员');
+    onChange({ ...state, members: state.members.filter(m => m.id !== id) });
+  };
+
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-    <View style={styles.card}>
-      <Text style={styles.h2}>⚙️ 大模型配置</Text>
-      <Text style={styles.sub}>当前默认：DeepSeek V4 Pro。正式接入时，建议所有 AI 输出先走规则层过滤，再展示给用户。</Text>
-      <Text style={[styles.sub, { marginTop: 12 }]}>服务商</Text>
-      <TextInput style={styles.input} value={model.provider} onChangeText={(provider) => updateModel({ provider })} />
-      <Text style={styles.sub}>模型名称</Text>
-      <TextInput style={styles.input} value={model.model} onChangeText={(modelName) => updateModel({ model: modelName })} />
-      <Text style={styles.sub}>API Endpoint</Text>
-      <TextInput style={styles.input} autoCapitalize="none" value={model.endpoint} onChangeText={(endpoint) => updateModel({ endpoint })} />
-      <Text style={styles.sub}>API Key</Text>
-      <TextInput style={styles.input} secureTextEntry value={model.apiKey} onChangeText={(apiKey) => updateModel({ apiKey })} placeholder="sk-..." />
-      <Pressable style={[styles.button, { backgroundColor: colors.gold }]} onPress={() => updateModel({ provider: 'DeepSeek', model: 'DeepSeek V4 Pro', endpoint: 'https://api.deepseek.com/chat/completions' })}>
-        <Text style={styles.buttonText}>恢复 DeepSeek V4 Pro 默认配置</Text>
-      </Pressable>
-    </View>
+    <Text style={styles.h2}>👨‍👩‍👧 家庭成员管理</Text>
+    {state.members.map(m => (
+      <View key={m.id} style={styles.card}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 18, fontWeight: '700', color: colors.greenDark }}>{m.name}</Text>
+          <Pressable onPress={() => deleteMember(m.id)}><Text style={{ color: colors.danger }}>删除</Text></Pressable>
+        </View>
+
+        <Text style={[styles.sub, { marginTop: 12 }]}>体质（可多选）</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
+          {Object.keys(constitutions).map(c => (
+            <Pressable key={c} onPress={() => toggleMemberField(m.id, 'constitutions', c)} style={{
+              paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginRight: 6, marginBottom: 6,
+              backgroundColor: m.constitutions.includes(c as any) ? colors.green : '#f0f0f0'
+            }}>
+              <Text style={{ fontSize: 12, color: m.constitutions.includes(c as any) ? 'white' : '#666' }}>{c}</Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <Text style={[styles.sub, { marginTop: 8 }]}>健康与过敏标签</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
+          {ALL_HEALTH_TAGS.map(t => (
+            <Pressable key={t} onPress={() => toggleMemberField(m.id, 'healthTags', t)} style={{
+              paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, marginRight: 6, marginBottom: 6,
+              backgroundColor: m.healthTags.includes(t) ? colors.greenDark : '#f0f0f0'
+            }}>
+              <Text style={{ fontSize: 12, color: m.healthTags.includes(t) ? 'white' : '#666' }}>{t}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    ))}
 
     <View style={styles.card}>
-      <Text style={styles.h2}>🛡️ 数据准确与安全策略</Text>
-      <Text style={styles.text}>1. 节气采用 2026 年节气日期表，不再用固定月日粗略判断。</Text>
-      <Text style={styles.text}>2. 食材推荐先走本地结构化规则：体质、月份、忌口、过敏、健康标签过滤。</Text>
-      <Text style={styles.text}>3. 大模型只负责把已筛选的候选食材组织成自然语言，不允许绕过禁忌规则。</Text>
-      <Text style={styles.text}>4. 特殊人群（孕期、慢病、过敏）强制展示保守提醒和免责声明。</Text>
+      <Text style={styles.h2}>⚙️ 大模型配置</Text>
+      <Text style={styles.sub}>API Key</Text>
+      <TextInput style={styles.input} secureTextEntry value={model.apiKey} onChangeText={(apiKey) => updateModel({ apiKey })} placeholder="sk-..." />
     </View>
 
     <View style={styles.card}>
       <Text style={styles.h2}>免责声明</Text>
-      <Text style={styles.sub}>本产品提供的内容仅供日常养生参考，不构成医疗诊断、治疗或用药建议；疾病、孕期、术后恢复等情况请咨询专业医师。</Text>
+      <Text style={styles.sub}>内容仅供日常养生参考，不构成医疗建议。</Text>
     </View>
   </ScrollView>;
 }

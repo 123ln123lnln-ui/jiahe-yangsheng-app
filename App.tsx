@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable, StatusBar, Text, View } from 'react-native';
-import { HomeScreen } from './src/screens/HomeScreen';
-import { FoodScreen } from './src/screens/FoodScreen';
-import { MealScreen } from './src/screens/MealScreen';
-import { FamilyScreen } from './src/screens/FamilyScreen';
-import { SettingsScreen } from './src/screens/SettingsScreen';
-import { type AppState, defaultState, loadState, saveState } from './src/lib/storage';
-import { currentSolarTerm } from './src/data/solarTerms';
-import { colors } from './src/components/styles';
+import { DietScreen } from './src/screens/DietScreen';
+import { EatScreen } from './src/screens/EatScreen';
 
-type Tab = 'home' | 'food' | 'meal' | 'family' | 'settings';
+type Tab = 'home' | 'diet' | 'eat' | 'settings';
 
 const tabs: { key: Tab; icon: string; label: string }[] = [
   { key: 'home', icon: '🏠', label: '今日' },
-  { key: 'food', icon: '🥗', label: '食材' },
-  { key: 'meal', icon: '🍲', label: '共餐' },
-  { key: 'family', icon: '👨‍👩‍👧', label: '家人' },
-  { key: 'settings', icon: '⚙️', label: '设置' },
+  { key: 'diet', icon: '🍲', label: '食养' },
+  { key: 'eat', icon: '🍽️', label: '想吃' },
+  { key: 'settings', icon: '⚙️', label: '管理' },
 ];
 
 export default function App() {
@@ -38,9 +31,8 @@ export default function App() {
       </View>
       <View style={{ flex: 1 }}>
         {tab === 'home' ? <HomeScreen state={state} /> : null}
-        {tab === 'food' ? <FoodScreen /> : null}
-        {tab === 'meal' ? <MealScreen state={state} /> : null}
-        {tab === 'family' ? <FamilyScreen state={state} onChange={updateState} /> : null}
+        {tab === 'diet' ? <DietScreen state={state} /> : null}
+        {tab === 'eat' ? <EatScreen state={state} onChange={updateState} /> : null}
         {tab === 'settings' ? <SettingsScreen state={state} onChange={updateState} /> : null}
       </View>
       <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: 'white' }}>
@@ -55,3 +47,4 @@ export default function App() {
     </SafeAreaView>
   </SafeAreaProvider>;
 }
+

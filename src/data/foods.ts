@@ -2,7 +2,7 @@ import type { Constitution } from './constitutions';
 
 export type Food = {
   name: string;
-  category: '蔬' | '果' | '谷' | '肉' | '海' | '菌' | '药' | '调' | '豆' | '其他';
+  category: '蔬' | '果' | '谷' | '肉' | '海' | '菌' | '药' | '调' | '豆' | '干' | '茶' | '油' | '其他';
   nature: string;
   taste: string;
   meridian: string;
@@ -10,10 +10,14 @@ export type Food = {
   fit: Constitution[];
   avoid: Constitution[];
   months: number[];
+  processTip?: string; // 加工搭配建议
 };
 
 export const foods: Food[] = [
-  { name: '山药', category: '蔬', nature: '平', taste: '甘', meridian: '脾肺肾', effect: '健脾益肺、补肾固精', fit: ['气虚质', '阳虚质', '痰湿质'], avoid: [], months: [9,10,11,12,1] },
+  { name: '山药', category: '蔬', nature: '平', taste: '甘', meridian: '脾肺肾', effect: '健脾益肺、补肾固精', fit: ['气虚质', '阳虚质', '痰湿质'], avoid: [], months: [9,10,11,12,1], processTip: '配芡实煮粥，补脾效果更佳' },
+  { name: '核桃', category: '干', nature: '温', taste: '甘', meridian: '肾肺大肠', effect: '补肾助阳、润肠通便', fit: ['阳虚质'], avoid: ['湿热质'], months: [9,10,11], processTip: '琥珀核桃或入药膳' },
+  { name: '绿茶', category: '茶', nature: '寒', taste: '苦甘', meridian: '心肝', effect: '清热解毒、利尿', fit: ['湿热质'], avoid: ['阳虚质'], months: [4,5,6], processTip: '不宜空腹饮用，配玫瑰花可疏肝' },
+  { name: '芝麻油', category: '油', nature: '凉', taste: '甘', meridian: '大肠', effect: '润燥通便', fit: ['阴虚质'], avoid: ['痰湿质'], months: [1,2,3,4,5,6,7,8,9,10,11,12], processTip: '凉拌蔬菜，保留活性' },
   { name: '薏米', category: '谷', nature: '凉', taste: '甘淡', meridian: '脾肺', effect: '利水渗湿、健脾止泻', fit: ['痰湿质', '湿热质'], avoid: ['阳虚质'], months: [7,8,9] },
   { name: '赤小豆', category: '谷', nature: '平', taste: '甘酸', meridian: '心小肠', effect: '利水消肿、清热解毒', fit: ['痰湿质', '湿热质'], avoid: [], months: [8,9,10] },
   { name: '冬瓜', category: '蔬', nature: '凉', taste: '甘淡', meridian: '肺大肠', effect: '清热利水、消肿解暑', fit: ['湿热质', '痰湿质'], avoid: ['阳虚质'], months: [6,7,8,9] },
