@@ -45,9 +45,9 @@ export const defaultState: AppState = {
     { id: 'm1', name: '妈妈', gender: '女', age: 36, constitutions: ['平和质'], healthTags: [], avoidList: [] },
   ],
   model: {
-    provider: 'DeepSeek',
-    model: 'DeepSeek V4 Pro',
-    endpoint: 'https://api.deepseek.com/chat/completions',
+    provider: 'SenseNova',
+    model: 'SenseNova-U1',
+    endpoint: 'https://api.sensenova.cn/v1/chat/completions',
     apiKey: '',
   },
   eatRecords: [],

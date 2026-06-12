@@ -30,9 +30,16 @@ export function recommendationFor(member: Member) {
 }
 
 export function safetyNote(member: Member) {
-  if (member.healthTags.includes('孕期')) return '孕期体质特殊，活血、寒凉、滑利食材请谨慎，具体请遵医嘱。';
-  if (member.healthTags.includes('糖尿病')) return '控糖人群请控制高糖水果、蜂蜜、桂圆、红枣等摄入。';
-  if (member.healthTags.includes('高血压')) return '高血压人群宜清淡少盐，避免重油重辣。';
-  if (member.healthTags.includes('痛风')) return '痛风或高尿酸人群请谨慎选择海鲜、浓汤和动物内脏。';
-  return '本建议仅供日常养生参考，不构成医疗诊断或治疗建议。';
+  const notes = [];
+  if (member.healthTags.includes('孕期')) notes.push('孕期体质特殊，活血、寒凉、滑利食材请谨慎。');
+  if (member.healthTags.includes('糖尿病')) notes.push('控糖人群请控制高糖摄入。');
+  if (member.healthTags.includes('高血压')) notes.push('低盐饮食，清淡为主。');
+  if (member.healthTags.includes('痛风')) notes.push('低嘌呤饮食，少食浓汤。');
+  
+  // 针对新症状标签的动态提醒
+  if (member.healthTags.includes('手脚冰凉')) notes.push('建议多食温热食物，每晚泡脚。');
+  if (member.healthTags.includes('失眠多梦')) notes.push('晚饭不宜过饱，可食百合小米粥。');
+  if (member.healthTags.includes('眼睛干涩')) notes.push('宜食枸杞、菊花，控制用眼时长。');
+
+  return notes.length > 0 ? notes.join(' ') : '本建议仅供日常养生参考。';
 }

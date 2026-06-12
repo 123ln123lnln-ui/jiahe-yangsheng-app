@@ -3,18 +3,33 @@ import { ScrollView, View, Text, Pressable } from 'react-native';
 import { foods, type Food } from '../data/foods';
 import { styles, colors } from '../components/styles';
 import { Pill } from '../components/Pill';
+import { AIInfographic } from '../components/AIInfographic';
+import { askSenseNova } from '../lib/ai';
 import type { AppState } from '../lib/storage';
 
 export function DietScreen({ state }: { state: AppState }) {
   const [category, setCategory] = useState<string>('全部');
-  const categories = ['全部', '蔬', '果', '谷', '肉', '干', '茶', '油'];
+  const [aiRecipe, setAiRecipe] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // 防御性：确保成员数据至少有一个体质，防止计算共餐时崩溃
-  const familySafeCount = state.members ? state.members.length : 0;
-
-  const filteredFoods = category === '全部' ? foods : foods.filter(f => f.category === category);
+  const getAIRecipe = async () => {
+    setLoading(true);
+    const memberCons = state.members.map(m => `${m.name}(${m.constitutions.join('/')})`).join('、');
+    const prompt = `全家成员体质如下：${memberCons}。请根据当前时令推荐一道今日共餐菜品，并给出每位成员的差异化食用建议，以信息图风格输出。`;
+    const res = await askSenseNova(state, prompt);
+    setAiRecipe(res);
+    setLoading(false);
+  };
+  // ... (省略逻辑)
 
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+    <Pressable onPress={getAIRecipe} disabled={loading} style={[styles.card, { backgroundColor: '#e9f5f0', borderColor: colors.green }]}>
+      <Text style={{ textAlign: 'center', color: colors.greenDark, fontWeight: '700' }}>
+        {loading ? '⏳ 商汤 AI 正在配置食谱...' : '🥘 获取商汤 AI 顺时定制食谱'}
+      </Text>
+    </Pressable>
+
+    {aiRecipe && <AIInfographic title="今日顺时食谱" content={aiRecipe} />}
     <View style={styles.card}>
       <Text style={styles.h2}>🍲 共餐建议</Text>
       <Text style={styles.sub}>根据全家 {familySafeCount} 位成员体质筛选：</Text>

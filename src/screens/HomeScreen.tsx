@@ -1,13 +1,18 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, Pressable } from 'react-native';
 import { constitutions, type Constitution } from '../data/constitutions';
 import { teasByZang } from '../data/foods';
 import { recommendationFor, safetyNote } from '../lib/recommend';
 import type { AppState } from '../lib/storage';
 import { styles, colors } from '../components/styles';
 import { Pill } from '../components/Pill';
+import { AIInfographic } from '../components/AIInfographic';
+import { askSenseNova } from '../lib/ai';
 
 export function HomeScreen({ state }: { state: AppState }) {
+  const [aiInsight, setAiInsight] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
   const currentMember = state.members.find((m) => m.id === state.currentMemberId);
   const member = currentMember || state.members[0];
   
@@ -21,6 +26,15 @@ export function HomeScreen({ state }: { state: AppState }) {
     : ['平和质'];
 
   const rec = recommendationFor({ ...member, constitutions: safeConstitutions });
+
+  const getAIInsight = async () => {
+    setLoading(true);
+    const prompt = `你是中医养生专家。请针对成员[${member.name}]，性别[${member.gender}]，体质[${safeConstitutions.join('/')}]，当前节气[${rec.term.name}]，天气[${rec.weather.text}]，给出今日的身心养生建议，以精炼的信息图风格输出。`;
+    const res = await askSenseNova(state, prompt);
+    setAiInsight(res);
+    setLoading(false);
+  };
+
   const teas = teasByZang[rec.term.zang] || [];
 
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -29,6 +43,14 @@ export function HomeScreen({ state }: { state: AppState }) {
       <Text style={{ color: '#f4f1df', marginTop: 6 }}>{state.province}{state.city} · {rec.weather.text}</Text>
       <Text style={{ color: 'white', marginTop: 8, lineHeight: 22 }}>{rec.term.focus}。{rec.term.advice}</Text>
     </View>
+
+    <Pressable onPress={getAIInsight} disabled={loading} style={[styles.card, { backgroundColor: colors.warm, borderColor: colors.gold, paddingVertical: 12 }]}>
+      <Text style={{ textAlign: 'center', color: colors.greenDark, fontWeight: '700' }}>
+        {loading ? '⏳ 商汤 SenseNova 正在推演...' : '✨ 获取商汤 AI 每日养生洞察'}
+      </Text>
+    </Pressable>
+
+    {aiInsight && <AIInfographic title="今日养生洞察" content={aiInsight} />}
 
     <View style={styles.card}>
       <Text style={styles.h2}>{constitutions[safeConstitutions[0] || '平和质']?.icon || '🌿'} {member.name}的今日养生 · {safeConstitutions.join('、')}</Text>
