@@ -51,7 +51,20 @@ const key = 'jiahe-yangsheng-state-v1';
 export async function loadState(): Promise<AppState> {
   const raw = await AsyncStorage.getItem(key);
   if (!raw) return defaultState;
-  return { ...defaultState, ...JSON.parse(raw) };
+  const parsed = JSON.parse(raw);
+
+  // 数据迁移/兼容：处理旧版单选体质
+  if (parsed.members) {
+    parsed.members = parsed.members.map((m: any) => {
+      if (m.constitution && !m.constitutions) {
+        m.constitutions = [m.constitution];
+        delete m.constitution;
+      }
+      return m;
+    });
+  }
+
+  return { ...defaultState, ...parsed };
 }
 
 export async function saveState(state: AppState): Promise<void> {

@@ -19,8 +19,13 @@ export function recommendationFor(member: Member) {
     if (member.avoidList.includes('生冷') && ['寒', '凉', '微寒'].includes(food.nature)) return false;
     return true;
   });
-  const fit = allergyFiltered.filter((food) => !food.avoid.includes(member.constitution) && (food.fit.includes(member.constitution) || food.fit.length === 0));
-  const avoid = seasonal.filter((food) => food.avoid.includes(member.constitution));
+  const fit = allergyFiltered.filter((food) => {
+    // 只要成员的任一体质在食材禁忌中，就排除
+    if (member.constitutions.some(c => food.avoid.includes(c))) return false;
+    // 如果食材没有特定适合体质，或成员任一体质在适合列表中，则推荐
+    return food.fit.length === 0 || member.constitutions.some(c => food.fit.includes(c));
+  });
+  const avoid = seasonal.filter((food) => member.constitutions.some(c => food.avoid.includes(c)));
   return { term, weather: weatherBySeason(), fit: fit.slice(0, 8), avoid: avoid.slice(0, 5) };
 }
 
