@@ -9,6 +9,7 @@ export type SolarTerm = {
   zang: '肝' | '心' | '脾' | '肺' | '肾';
   focus: string;
   advice: string;
+  mindAdvice?: string;
 };
 
 export const solarTerms2026: SolarTerm[] = [

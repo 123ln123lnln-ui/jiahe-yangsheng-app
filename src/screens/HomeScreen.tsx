@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, View, Text } from 'react-native';
-import { constitutions } from '../data/constitutions';
+import { constitutions, type Constitution } from '../data/constitutions';
 import { teasByZang } from '../data/foods';
 import { recommendationFor, safetyNote } from '../lib/recommend';
 import type { AppState } from '../lib/storage';
@@ -16,7 +16,7 @@ export function HomeScreen({ state }: { state: AppState }) {
   }
 
   // 防御性处理体质数据
-  const safeConstitutions = Array.isArray(member.constitutions) && member.constitutions.length > 0 
+  const safeConstitutions: Constitution[] = Array.isArray(member.constitutions) && member.constitutions.length > 0 
     ? member.constitutions 
     : ['平和质'];
 
@@ -31,7 +31,7 @@ export function HomeScreen({ state }: { state: AppState }) {
     </View>
 
     <View style={styles.card}>
-      <Text style={styles.h2}>{constitutions[safeConstitutions[0]]?.icon || '🌿'} {member.name}的今日养生 · {safeConstitutions.join('、')}</Text>
+      <Text style={styles.h2}>{constitutions[safeConstitutions[0] || '平和质']?.icon || '🌿'} {member.name}的今日养生 · {safeConstitutions.join('、')}</Text>
       <Text style={styles.sub}>{safeConstitutions.map(c => constitutions[c]?.care || '').join(' ')}</Text>
       <Text style={[styles.h2, { marginTop: 16 }]}>🍎 今日宜吃</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{rec.fit.map((food) => <Pill key={food.name} label={`${food.name}·${food.nature}`} />)}</View>

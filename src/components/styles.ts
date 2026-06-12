@@ -7,6 +7,7 @@ export const colors = {
   bg: '#f5f2ea',
   card: '#fffdf8',
   ink: '#2d2a24',
+  text: '#2d2a24',
   sub: '#7a746a',
   line: '#e8e2d4',
   danger: '#c0573b',

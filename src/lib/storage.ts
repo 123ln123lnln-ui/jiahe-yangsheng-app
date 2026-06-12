@@ -11,6 +11,13 @@ export type Member = {
   avoidList: string[];
 };
 
+export type ModelConfig = {
+  provider: string;
+  model: string;
+  endpoint: string;
+  apiKey: string;
+};
+
 export type EatRecord = {
   id: string;
   timestamp: number;

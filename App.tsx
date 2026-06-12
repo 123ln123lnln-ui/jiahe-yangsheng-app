@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable, StatusBar, Text, View } from 'react-native';
+import { HomeScreen } from './src/screens/HomeScreen';
 import { DietScreen } from './src/screens/DietScreen';
 import { EatScreen } from './src/screens/EatScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { type AppState, defaultState, loadState, saveState } from './src/lib/storage';
+import { currentSolarTerm } from './src/data/solarTerms';
+import { colors } from './src/components/styles';
 
 type Tab = 'home' | 'diet' | 'eat' | 'settings';
 
