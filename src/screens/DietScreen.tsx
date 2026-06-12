@@ -20,7 +20,10 @@ export function DietScreen({ state }: { state: AppState }) {
     setAiRecipe(res);
     setLoading(false);
   };
-  // ... (省略逻辑)
+
+  const categories = ['全部', '蔬', '果', '谷', '肉', '干', '茶', '油'];
+  const familySafeCount = state.members ? state.members.length : 0;
+  const filteredFoods = category === '全部' ? foods : foods.filter(f => f.category === category);
 
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
     <Pressable onPress={getAIRecipe} disabled={loading} style={[styles.card, { backgroundColor: '#e9f5f0', borderColor: colors.green }]}>
