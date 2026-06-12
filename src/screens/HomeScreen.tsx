@@ -8,10 +8,21 @@ import { styles, colors } from '../components/styles';
 import { Pill } from '../components/Pill';
 
 export function HomeScreen({ state }: { state: AppState }) {
-  const member = state.members.find((m) => m.id === state.currentMemberId) ?? state.members[0];
-  if (!member) return null;
-  const rec = recommendationFor(member);
-  const teas = teasByZang[rec.term.zang];
+  const currentMember = state.members.find((m) => m.id === state.currentMemberId);
+  const member = currentMember || state.members[0];
+  
+  if (!member) {
+    return <View style={styles.screen}><Text>正在初始化数据...</Text></View>;
+  }
+
+  // 防御性处理体质数据
+  const safeConstitutions = Array.isArray(member.constitutions) && member.constitutions.length > 0 
+    ? member.constitutions 
+    : ['平和质'];
+
+  const rec = recommendationFor({ ...member, constitutions: safeConstitutions });
+  const teas = teasByZang[rec.term.zang] || [];
+
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
     <View style={{ backgroundColor: colors.green, borderRadius: 16, padding: 16, marginBottom: 14 }}>
       <Text style={{ color: 'white', fontSize: 24, fontWeight: '800' }}>{rec.term.name} · 养{rec.term.zang}</Text>
@@ -20,8 +31,8 @@ export function HomeScreen({ state }: { state: AppState }) {
     </View>
 
     <View style={styles.card}>
-      <Text style={styles.h2}>{constitutions[member.constitutions?.[0] || '平和质']?.icon} {member.name}的今日养生 · {member.constitutions?.join('、') || '平和质'}</Text>
-      <Text style={styles.sub}>{member.constitutions?.map(c => constitutions[c]?.care).join(' ') || '保持良好的生活习惯。'}</Text>
+      <Text style={styles.h2}>{constitutions[safeConstitutions[0]]?.icon || '🌿'} {member.name}的今日养生 · {safeConstitutions.join('、')}</Text>
+      <Text style={styles.sub}>{safeConstitutions.map(c => constitutions[c]?.care || '').join(' ')}</Text>
       <Text style={[styles.h2, { marginTop: 16 }]}>🍎 今日宜吃</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{rec.fit.map((food) => <Pill key={food.name} label={`${food.name}·${food.nature}`} />)}</View>
       <Text style={[styles.h2, { marginTop: 12 }]}>🚫 建议少吃</Text>

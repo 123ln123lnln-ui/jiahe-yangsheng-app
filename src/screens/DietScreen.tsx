@@ -9,12 +9,15 @@ export function DietScreen({ state }: { state: AppState }) {
   const [category, setCategory] = useState<string>('全部');
   const categories = ['全部', '蔬', '果', '谷', '肉', '干', '茶', '油'];
 
+  // 防御性：确保成员数据至少有一个体质，防止计算共餐时崩溃
+  const familySafeCount = state.members ? state.members.length : 0;
+
   const filteredFoods = category === '全部' ? foods : foods.filter(f => f.category === category);
 
   return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
     <View style={styles.card}>
       <Text style={styles.h2}>🍲 共餐建议</Text>
-      <Text style={styles.sub}>根据全家 {state.members.length} 位成员体质筛选：</Text>
+      <Text style={styles.sub}>根据全家 {familySafeCount} 位成员体质筛选：</Text>
       <View style={{ marginTop: 10, padding: 12, backgroundColor: '#fdfaf2', borderRadius: 8 }}>
         <Text style={{ fontWeight: '700', color: colors.greenDark }}>💡 今日共餐：山药排骨汤</Text>
         <Text style={styles.sub}>改良逻辑：山药补脾，排骨滋阴，适合全家多数体质。</Text>
