@@ -20,8 +20,8 @@ export function HomeScreen({ state }: { state: AppState }) {
     </View>
 
     <View style={styles.card}>
-      <Text style={styles.h2}>{constitutions[member.constitution].icon} {member.name}的今日养生 · {member.constitution}</Text>
-      <Text style={styles.sub}>{constitutions[member.constitution].care}</Text>
+      <Text style={styles.h2}>{constitutions[member.constitutions?.[0] || '平和质']?.icon} {member.name}的今日养生 · {member.constitutions?.join('、') || '平和质'}</Text>
+      <Text style={styles.sub}>{member.constitutions?.map(c => constitutions[c]?.care).join(' ') || '保持良好的生活习惯。'}</Text>
       <Text style={[styles.h2, { marginTop: 16 }]}>🍎 今日宜吃</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{rec.fit.map((food) => <Pill key={food.name} label={`${food.name}·${food.nature}`} />)}</View>
       <Text style={[styles.h2, { marginTop: 12 }]}>🚫 建议少吃</Text>
