@@ -1,3 +1,13 @@
+> ⚠️ **本仓库已归档（Archived）—— 内容已合并，请勿在此继续开发。**
+>
+> 合并去向：**[`123ln123lnln-ui/yangsheng`](https://github.com/123ln123lnln-ui/yangsheng)**（private）
+>
+> 合并内容：本仓库的 `FamilyScreen` / `FoodScreen` / `MealScreen` 三个页面
+> ＋ `yangsheng` 的 Expo 标准构建配置（babel/metro/assets）
+> ＋ Python 判断层与养生知识库（脱敏版）。
+
+---
+
 # 家和养生 Android App
 
 基于 Expo React Native 的家庭中医养生助手原型，迁移自 `家和养生.html` 和 PRD。
